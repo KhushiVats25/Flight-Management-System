@@ -57,4 +57,12 @@ public class RouteController {
     }
 
 
+    @GetMapping("/{id}")
+    public ResponseEntity<RouteDTO> getRouteById(@PathVariable int id) {
+        RouteDTO route = routeService.getRouteById(id);
+        return ResponseEntity.ok(route);
+    }
+
+
+
 }

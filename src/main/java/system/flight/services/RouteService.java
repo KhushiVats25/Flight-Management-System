@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import system.flight.dto.RouteDTO;
 import system.flight.entities.Role;
 import system.flight.entities.Route;
@@ -60,5 +61,13 @@ public class RouteService {
                 .map(RouteMapper::toDTO)
                 .toList();
     }
+
+    public RouteDTO getRouteById(int id) {
+        Route route = routeRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Route not found with ID: " + id));
+        return RouteMapper.toDTO(route);
+    }
+
+
 
 }
