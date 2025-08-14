@@ -3,6 +3,7 @@ package system.flight.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import system.flight.dto.RouteDTO;
@@ -90,6 +91,15 @@ public class RouteService {
         Route updatedRoute = routeRepository.save(existingRoute);
         return RouteMapper.toDTO(updatedRoute);
     }
+
+    @DeleteMapping("/{id}")
+    public void deleteRoute(int routeId) {
+        if (!routeRepository.existsById(routeId)) {
+            throw new RuntimeException("Route with ID " + routeId + " not found.");
+        }
+        routeRepository.deleteById(routeId);
+    }
+
 
 
 }

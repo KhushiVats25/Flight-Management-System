@@ -71,6 +71,17 @@ public class RouteController {
     }
 
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteRoute(@PathVariable int id) {
+        try {
+            routeService.deleteRoute(id);
+            return ResponseEntity.ok("Route deleted successfully.");
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(404).body(e.getMessage());
+        }
+    }
+
+
 
 
 
