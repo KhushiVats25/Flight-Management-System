@@ -53,4 +53,12 @@ public class RouteService {
                 .toList();
     }
 
+
+    public List<RouteDTO> getRoutesByDepartureTime(LocalDateTime departureTime) {
+        List<Route> routes = routeRepository.findByDepartureTime(departureTime);
+        return routes.stream()
+                .map(RouteMapper::toDTO)
+                .toList();
+    }
+
 }

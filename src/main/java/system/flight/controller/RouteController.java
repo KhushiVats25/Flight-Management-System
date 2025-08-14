@@ -49,5 +49,12 @@ public class RouteController {
         return ResponseEntity.ok(routes);
     }
 
+    @GetMapping("/departure")
+    public ResponseEntity<List<RouteDTO>> getRoutesByDepartureTime(@RequestParam String departureTime) {
+        LocalDateTime time = LocalDateTime.parse(departureTime);
+        List<RouteDTO> routes = routeService.getRoutesByDepartureTime(time);
+        return ResponseEntity.ok(routes);
+    }
+
 
 }
