@@ -68,6 +68,32 @@ public class RouteService {
         return RouteMapper.toDTO(route);
     }
 
+    public RouteDTO updateRoute(int routeId, RouteDTO routeDTO) {
+        Route existingRoute = routeRepository.findById(routeId)
+                .orElse(null);
+
+        if (existingRoute == null) {
+            return null;
+        }
+
+        if (routeDTO.getDepartureTime() != null) {
+            existingRoute.setDepartureTime(routeDTO.getDepartureTime());
+        }
+        if (routeDTO.getArrivalTime() != null) {
+            existingRoute.setArrivalTime(routeDTO.getArrivalTime());
+        }
+        if (routeDTO.getDistanceInKm() != -1) {
+            existingRoute.setDistanceKm(routeDTO.getDistanceInKm());
+        }
+
+
+        Route updatedRoute = routeRepository.save(existingRoute);
+        return RouteMapper.toDTO(updatedRoute);
+    }
 
 
 }
+
+
+
+

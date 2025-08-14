@@ -64,5 +64,18 @@ public class RouteController {
     }
 
 
+    @PutMapping("/{id}")
+    public ResponseEntity<RouteDTO> updateRoute(@PathVariable int id, @RequestBody RouteDTO routeDTO) {
+        RouteDTO updatedRoute = routeService.updateRoute(id, routeDTO);
+        return updatedRoute != null ? ResponseEntity.ok(updatedRoute) : ResponseEntity.notFound().build();
+    }
+
+
+
+
 
 }
+
+
+
+
