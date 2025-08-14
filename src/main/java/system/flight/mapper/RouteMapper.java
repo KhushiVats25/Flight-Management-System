@@ -18,6 +18,7 @@ public class RouteMapper {
         Route.setDistanceKm(RouteDTO.getDistanceInKm());
         Route.setEstimatedTime(RouteDTO.getEstimatedTime());
         Route.setArrivalTime(RouteDTO.getArrivalTime());
+        Route.setDepartureTime(RouteDTO.getDepartureTime());
         return Route;
     }
 }

@@ -22,8 +22,11 @@ public class RouteController {
         RouteDTO createdRoute=routeService.createRoute(routeDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdRoute);
     }
-//    @GetMapping
-//    public ResponseEntity<List<RouteDTO>>getAllRoutes(){
-//        return ResponseEntity.ok(routeService.getAllRoles());
-//    }
+    @GetMapping
+    public ResponseEntity<List<RouteDTO>> getAllRoutes() {
+        List<RouteDTO> routes = routeService.getAllRoutes();
+        return ResponseEntity.ok(routes);
+    }
+
+
 }
