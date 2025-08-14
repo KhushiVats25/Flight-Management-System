@@ -6,8 +6,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import system.flight.dto.RouteDTO;
+import system.flight.entities.Route;
 import system.flight.services.RouteService;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -37,6 +39,15 @@ public class RouteController {
     public  ResponseEntity<List<RouteDTO>> getRoutesByDestinationCity(@RequestParam String destinationCity){
         List<RouteDTO> routes=routeService.getRoutesByDestinationCity(destinationCity);
         return ResponseEntity.ok(routes);
+
 }
+
+    @GetMapping("/arrival")
+    public ResponseEntity<List<RouteDTO>> getRoutesByArrivalTime(@RequestParam String arrivalTime) {
+        LocalDateTime time = LocalDateTime.parse(arrivalTime);
+        List<RouteDTO> routes = routeService.getRoutesByArrivalTime(time);
+        return ResponseEntity.ok(routes);
+    }
+
 
 }

@@ -10,6 +10,7 @@ import system.flight.entities.Route;
 import system.flight.mapper.RouteMapper;
 import system.flight.repository.RouteRepository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -45,6 +46,11 @@ public class RouteService {
 
 
 
-
+    public List<RouteDTO> getRoutesByArrivalTime(LocalDateTime arrivalTime) {
+        List<Route> routes = routeRepository.findByArrivalTime(arrivalTime);
+        return routes.stream()
+                .map(RouteMapper::toDTO)
+                .toList();
+    }
 
 }
