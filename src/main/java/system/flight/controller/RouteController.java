@@ -28,5 +28,15 @@ public class RouteController {
         return ResponseEntity.ok(routes);
     }
 
+    @GetMapping("/source")
+    public ResponseEntity<List<RouteDTO>> getRoutesBySourceCity(@RequestParam String sourceCity) {
+        List<RouteDTO> routes = routeService.getRoutesBySourceCity(sourceCity);
+        return ResponseEntity.ok(routes);
+    }
+@GetMapping("/destination")
+    public  ResponseEntity<List<RouteDTO>> getRoutesByDestinationCity(@RequestParam String destinationCity){
+        List<RouteDTO> routes=routeService.getRoutesByDestinationCity(destinationCity);
+        return ResponseEntity.ok(routes);
+}
 
 }

@@ -29,6 +29,21 @@ public class RouteService {
                 .toList();
     }
 
+    public List<RouteDTO> getRoutesBySourceCity(String sourceCity) {
+        List<Route> routes = routeRepository.findBySourceCity(sourceCity);
+        return routes.stream()
+                .map(RouteMapper::toDTO)
+                .toList();
+    }
+
+    public List<RouteDTO> getRoutesByDestinationCity(String destinationCity) {
+        List<Route> routes = routeRepository.findByDestinationCity(destinationCity);
+        return routes.stream()
+                .map(RouteMapper::toDTO)
+                .toList();
+    }
+
+
 
 
 
