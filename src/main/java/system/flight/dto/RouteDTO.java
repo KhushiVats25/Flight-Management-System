@@ -19,5 +19,4 @@ public class RouteDTO {
     private int distanceInKm;
     private LocalTime estimatedTime;
 
-
 }

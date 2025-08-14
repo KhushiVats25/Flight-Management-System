@@ -3,13 +3,16 @@ package system.flight.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import system.flight.dto.RouteDTO;
 import system.flight.entities.Role;
 import system.flight.entities.Route;
 import system.flight.mapper.RouteMapper;
 import system.flight.repository.RouteRepository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -45,6 +48,62 @@ public class RouteService {
 
 
 
+    public List<RouteDTO> getRoutesByArrivalTime(LocalDateTime arrivalTime) {
+        List<Route> routes = routeRepository.findByArrivalTime(arrivalTime);
+        return routes.stream()
+                .map(RouteMapper::toDTO)
+                .toList();
+    }
+
+
+    public List<RouteDTO> getRoutesByDepartureTime(LocalDateTime departureTime) {
+        List<Route> routes = routeRepository.findByDepartureTime(departureTime);
+        return routes.stream()
+                .map(RouteMapper::toDTO)
+                .toList();
+    }
+
+    public RouteDTO getRouteById(int id) {
+        Route route = routeRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Route not found with ID: " + id));
+        return RouteMapper.toDTO(route);
+    }
+
+    public RouteDTO updateRoute(int routeId, RouteDTO routeDTO) {
+        Route existingRoute = routeRepository.findById(routeId)
+                .orElse(null);
+
+        if (existingRoute == null) {
+            return null;
+        }
+
+        if (routeDTO.getDepartureTime() != null) {
+            existingRoute.setDepartureTime(routeDTO.getDepartureTime());
+        }
+        if (routeDTO.getArrivalTime() != null) {
+            existingRoute.setArrivalTime(routeDTO.getArrivalTime());
+        }
+        if (routeDTO.getDistanceInKm() != -1) {
+            existingRoute.setDistanceKm(routeDTO.getDistanceInKm());
+        }
+
+
+        Route updatedRoute = routeRepository.save(existingRoute);
+        return RouteMapper.toDTO(updatedRoute);
+    }
+
+    @DeleteMapping("/{id}")
+    public void deleteRoute(int routeId) {
+        if (!routeRepository.existsById(routeId)) {
+            throw new RuntimeException("Route with ID " + routeId + " not found.");
+        }
+        routeRepository.deleteById(routeId);
+    }
+
 
 
 }
+
+
+
+
