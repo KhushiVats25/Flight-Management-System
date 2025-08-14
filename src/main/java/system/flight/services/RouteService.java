@@ -36,6 +36,13 @@ public class RouteService {
                 .toList();
     }
 
+    public List<RouteDTO> getRoutesByDestinationCity(String destinationCity) {
+        List<Route> routes = routeRepository.findByDestinationCity(destinationCity);
+        return routes.stream()
+                .map(RouteMapper::toDTO)
+                .toList();
+    }
+
 
 
 

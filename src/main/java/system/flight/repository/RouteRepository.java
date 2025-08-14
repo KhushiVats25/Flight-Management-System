@@ -9,6 +9,8 @@ import java.util.List;
 @Repository
 public interface RouteRepository extends JpaRepository<Route, Integer> {
     List<Route> findBySourceCity(String sourceCity);
+    List<Route> findByDestinationCity(String destinationCity);
+
 
 
 }
