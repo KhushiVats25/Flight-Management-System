@@ -1,5 +1,6 @@
 package system.flight.entities;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import java.util.List;
@@ -21,6 +22,7 @@ public class Role
         private String roleName;
 
         @OneToMany(mappedBy = "role", fetch = FetchType.LAZY)
+        @JsonManagedReference
         private List<User> users;
 
 }

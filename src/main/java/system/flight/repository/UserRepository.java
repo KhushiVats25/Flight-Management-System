@@ -7,7 +7,7 @@ import system.flight.entities.User;
 @Repository
 public interface UserRepository extends JpaRepository<User, Integer> {
 
-    boolean existsByUsername(String username);
+    boolean existsByUsername(String name);
     boolean existsByEmailId(String emailId);
 
 }
