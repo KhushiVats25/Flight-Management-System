@@ -39,7 +39,7 @@ public class UserService {
     @Autowired
     private RoleRepository roleRepository;
 
-    private static final String UPLOAD_DIR = "uploads/id-docs/";
+    private static final String UPLOAD_DIR = "uploads/";
 
     public CreateUserResponseDTO registerUser(CreateUserDTO dto) throws IllegalArgumentException {
 
@@ -81,51 +81,57 @@ public class UserService {
     }
 
 
-//    public UserProfileResponseDTO updateUserProfile(int userId, UserProfileDTO dto) {
-//        User user = userRepository.findById(userId)
-//                .orElseThrow(() -> new ResourceNotFoundException("User with id " + String.valueOf(userId) + " not found"));
-//
-//
-//
+    public UserProfileResponseDTO updateUserProfile(int userId, UserProfileDTO dto) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User with id " + String.valueOf(userId) + " not found"));
+
+
+
 //        user.setGender(dto.getGender());
 //        user.setEmailId(dto.getEmailId());
 //
 //
 //
 //        user.setFullName(dto.getFullName());
-//        user.setAddress(dto.getAddress());
-//        user.setPhoneNo(dto.getPhoneNo());
-//
-//        // Profile image
-//        if (dto.getProfileImage() != null && !dto.getProfileImage().isEmpty()) {
-//            try {
-//                user.setProfileImage(dto.getProfileImage().getBytes());
-//            } catch (IOException e) {
-//                throw new FileStorageException("Failed to save profile image");
-//            }
-//        }
-//
-//
-//        if (dto.getIdDocs() != null && !dto.getIdDocs().isEmpty()) {
-//            List<String> urls = new ArrayList<>();
-//            for (MultipartFile file : dto.getIdDocs()) {
-//                try {
-//                    String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
-//                    Path path = Paths.get(UPLOAD_DIR + fileName);
-//                    Files.createDirectories(path.getParent());
-//                    Files.write(path, file.getBytes());
-//                    urls.add(path.toString());
-//                } catch (IOException e) {
-//                    throw new FileStorageException("Failed to save ID document: " + file.getOriginalFilename());
-//                }
-//            }
-//            user.setIDocs(urls);
-//        }
-//
-//        User savedUser = userRepository.save(user);
-//        return UserMapper.toProfileResponseDTO(savedUser);
-//    }
+        user.setAddress(dto.getAddress());
+        user.setPhoneNo(dto.getPhoneNo());
+
+        // Profile image
+        if (dto.getProfileImage() != null && !dto.getProfileImage().isEmpty()) {
+            try {
+                user.setProfileImage(dto.getProfileImage().getBytes());
+            } catch (IOException e) {
+                throw new FileStorageException("Failed to save profile image");
+            }
+        }
 
 
+        if (dto.getIDocs() != null && !dto.getIDocs().isEmpty()) {
+            List<String> urls = new ArrayList<>();
+            for (MultipartFile file : dto.getIDocs()) {
+                try {
+                    String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
+                    Path path = Paths.get(UPLOAD_DIR + fileName);
+                    Files.createDirectories(path.getParent());
+                    Files.write(path, file.getBytes());
+                    urls.add(path.toString());
+                } catch (IOException e) {
+                    throw new FileStorageException("Failed to save ID document: " + file.getOriginalFilename());
+                }
+            }
+            user.setIDocs(urls);
+        }
+
+        User savedUser = userRepository.save(user);
+        return UserMapper.toProfileResponseDTO(savedUser);
+    }
+
+
+
+    public void deleteUserById(int userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NoSuchElementException("Cannot delete. User not found with ID: " + userId));
+        userRepository.delete(user);
+    }
 
     }

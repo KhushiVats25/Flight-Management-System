@@ -45,12 +45,12 @@ public class UserMapper {
 
     public static UserProfileResponseDTO toProfileResponseDTO(User user) {
         return new UserProfileResponseDTO(
-                user.getUserId(),
-                user.getFullName(),
+//                user.getUserId(),
+//                user.getFullName(),
                 user.getAddress(),
                 user.getPhoneNo(),
-                user.getEmailId(),
-                user.getGender(),
+//                user.getEmailId(),
+//                user.getGender(),
                 user.getProfileImage() != null ? "path/to/image/storage/" + user.getUserId() + ".jpg" : null,
                 user.getIDocs()
         );

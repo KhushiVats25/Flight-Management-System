@@ -13,15 +13,15 @@ import java.util.List;
 @NoArgsConstructor
 public class UserProfileResponseDTO {
 
-    private int userId;
-    private String fullName;
+//    private int userId;
+//    private String fullName;
     private String address;
     private String phoneNo;
-    private String emailId;
+//    private String emailId;
 
 //    private LocalDate dateOfBirth;
 
-    private String gender;
-    private String profileImageUrl;
-    private List<String> idDocUrls;
+//    private String gender;
+    private String profileImage;
+    private List<String> idDocs;
 }

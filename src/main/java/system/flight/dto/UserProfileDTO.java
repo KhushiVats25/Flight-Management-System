@@ -17,28 +17,28 @@ import java.util.List;
 public class UserProfileDTO {
 
 
-    @JsonProperty("address")
+//    @JsonProperty("address")
     private String address;
 
-    @JsonProperty("phoneNo")
+//    @JsonProperty("phoneNo")
     private String phoneNo;
 
-    @JsonProperty("gender")
-    private String gender;
-
-    @JsonProperty("fullName")
-    private String fullName;
+//    @JsonProperty("gender")
+//    private String gender;
+//
+//    @JsonProperty("fullName")
+//    private String fullName;
 
 
 //    @JsonFormat(pattern = "yyyy-MM-dd")
 //
 //    private LocalDate dateOfBirth;
 
-    @JsonProperty("emailId")
-    private String emailId;
+//    @JsonProperty("emailId")
+//    private String emailId;
 
 
 
-    private MultipartFile profileImage;   // single image
-    private List<MultipartFile> idDocs;
+    private MultipartFile profileImage;
+    private List<MultipartFile> iDocs;
 }
