@@ -17,8 +17,6 @@ public class AirlineService {
     @Autowired
     private AirlineRepository airlineRepository;
 
-
-
     @Autowired
     private UserService userService;
 
@@ -31,18 +29,26 @@ public class AirlineService {
 
     public AirlinesDTO getAirlineById(int id) {
         Airline airline = airlineRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Airline not found"));
+                .orElseThrow(() -> new RuntimeException("Airline not found with ID: " + id));
         return AirlineMapper.toDTO(airline);
     }
 
     public AirlinesDTO createAirline(AirlinesDTO dto) {
-
         if (dto.getOwnerId() == null) {
             throw new IllegalArgumentException("Owner ID is required");
         }
 
+        User owner;
+        try {
+            owner = userService.getUserById(dto.getOwnerId());
+        } catch (RuntimeException e) {
+            throw new RuntimeException("Invalid Owner ID: '" + dto.getOwnerId() + "'. Please enter a correct Owner ID.");
+        }
 
-        User owner = userService.getUserById(dto.getOwnerId());
+        boolean exists = airlineRepository.existsByNameOrCode(dto.getName(), dto.getCode());
+        if (exists) {
+            throw new RuntimeException("Airline already exists with name '" + dto.getName() + "' or code '" + dto.getCode() + "'");
+        }
 
         Airline airline = AirlineMapper.toEntity(dto, owner);
         Airline saved = airlineRepository.save(airline);
@@ -51,7 +57,7 @@ public class AirlineService {
 
     public AirlinesDTO updateAirline(int id, AirlinesDTO dto) {
         Airline existing = airlineRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Airline not found"));
+                .orElseThrow(() -> new RuntimeException("Airline not found with ID: " + id));
 
         if (dto.getName() != null) {
             existing.setName(dto.getName());
@@ -65,13 +71,14 @@ public class AirlineService {
             existing.setCode(dto.getCode());
         }
 
-
         Airline updated = airlineRepository.save(existing);
         return AirlineMapper.toDTO(updated);
     }
 
-
     public void deleteAirline(int id) {
+        if (!airlineRepository.existsById(id)) {
+            throw new RuntimeException("Airline not found with ID: " + id);
+        }
         airlineRepository.deleteById(id);
     }
 }
