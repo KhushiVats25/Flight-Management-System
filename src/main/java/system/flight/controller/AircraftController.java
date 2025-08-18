@@ -1,8 +1,11 @@
 package system.flight.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import system.flight.dto.AircraftResponseDTO;
 import system.flight.dto.AircraftsDTO;
+import system.flight.dto.AirlinesDTO;
 import system.flight.entities.Aircraft;
 import system.flight.services.AircraftService;
 
@@ -16,17 +19,31 @@ public class AircraftController {
     private AircraftService aircraftService;
 
     @PostMapping
-    public Aircraft createAircraft(@RequestBody AircraftsDTO dto) {
+    public AircraftResponseDTO createAircraft(@RequestBody AircraftsDTO dto) {
         return aircraftService.createAircraft(dto);
     }
 
     @GetMapping
-    public List<Aircraft> getAllAircrafts() {
+    public List<AircraftResponseDTO> getAllAircrafts() {
         return aircraftService.getAllAircrafts();
     }
 
     @GetMapping("/{id}")
-    public Aircraft getAircraftById(@PathVariable int id) {
+    public AircraftResponseDTO getAircraftById(@PathVariable int id) {
         return aircraftService.getAircraftById(id);
     }
+
+    @PutMapping("/{id}")
+    public AircraftResponseDTO updateAircraft(@PathVariable int id, @RequestBody AircraftsDTO dto) {
+        return aircraftService.updateAircraft(id, dto);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteAircraft(@PathVariable int id) {
+        aircraftService.deleteAircraft(id);
+        return ResponseEntity.ok("Aircraft with ID " + id + " has been deleted successfully.");
+    }
+
+
+
 }
