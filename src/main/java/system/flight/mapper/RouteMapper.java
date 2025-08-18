@@ -5,8 +5,7 @@ import system.flight.entities.Route;
 
 public class RouteMapper {
 
-    public static
-    RouteDTO toDTO(Route Route){
+    public static RouteDTO toDTO(Route Route){
         return new RouteDTO(Route.getRouteId(),Route.getDepartureTime(),Route.getArrivalTime(),Route.getSourceCity(),Route.getDestinationCity(),Route.getDistanceKm(),Route.getEstimatedTime());
     }
 
