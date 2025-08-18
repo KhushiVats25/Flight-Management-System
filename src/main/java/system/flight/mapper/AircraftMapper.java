@@ -1,5 +1,6 @@
 package system.flight.mapper;
 
+import system.flight.dto.AircraftResponseDTO;
 import system.flight.dto.AircraftsDTO;
 import system.flight.entities.Aircraft;
 import system.flight.entities.Airline;
@@ -24,5 +25,9 @@ public class AircraftMapper {
         aircraft.setAircraftStatus(dto.getAircraftStatus());
 
         return aircraft;
+    }
+
+    public static AircraftResponseDTO toResponseDTO(Aircraft aircraft){
+        return new AircraftResponseDTO(aircraft.getAircraftId(),aircraft.getAirline().getName(),aircraft.getRoute().getSourceCity(),aircraft.getRoute().getDestinationCity(),aircraft.getTotalSeats(),aircraft.getPricePerSeat(),aircraft.getAircraftStatus().name());
     }
 }

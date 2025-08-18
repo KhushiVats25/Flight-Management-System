@@ -3,6 +3,7 @@ package system.flight.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import system.flight.dto.AircraftResponseDTO;
 import system.flight.dto.AircraftsDTO;
 import system.flight.entities.Aircraft;
 import system.flight.entities.Airline;
@@ -35,7 +36,7 @@ public class AircraftService {
     @Autowired
     private SeatRepository seatRepository;
 
-    public Aircraft createAircraft(AircraftsDTO dto) {
+    public AircraftResponseDTO createAircraft(AircraftsDTO dto) {
         Airline airline = airlineRepository.findById(dto.getAirlineId())
                 .orElseThrow(() -> new ResourceNotFoundException("Airline not found"));
 
@@ -53,7 +54,7 @@ public class AircraftService {
         seatRepository.saveAll(seats);
         savedAircraft.setSeats(seats);
 
-        return savedAircraft;
+        return AircraftMapper.toResponseDTO(savedAircraft);
     }
 
     private String generateFlightNumber(String airlineName) {
@@ -76,13 +77,55 @@ public class AircraftService {
         return seats;
     }
 
-    public List<Aircraft> getAllAircrafts() {
-        return aircraftRepository.findAll();
+    public List<AircraftResponseDTO> getAllAircrafts() {
+        List<Aircraft> aircrafts=aircraftRepository.findAll();
+        List<AircraftResponseDTO> responseDTOS = new ArrayList<>();
+
+        for(Aircraft a:aircrafts){
+            AircraftResponseDTO dto=new AircraftResponseDTO();
+            responseDTOS.add(AircraftMapper.toResponseDTO(a));
+        }
+
+        return responseDTOS;
     }
 
-    public Aircraft getAircraftById(int id) {
-        return aircraftRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Aircraft not found"));
+    public AircraftResponseDTO getAircraftById(int id) {
+        Aircraft aircraft=aircraftRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Aircraft Not Found"));;
+
+        return AircraftMapper.toResponseDTO(aircraft);
+
     }
+
+    public AircraftResponseDTO updateAircraft(int id, AircraftsDTO dto) {
+        Aircraft existingAircraft = aircraftRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Aircraft not found"));
+
+        Airline airline = airlineRepository.findById(dto.getAirlineId())
+                .orElseThrow(() -> new ResourceNotFoundException("Airline not found"));
+
+        Route route = routeRepository.findById(dto.getRouteId())
+                .orElseThrow(() -> new ResourceNotFoundException("Route not found"));
+
+
+        existingAircraft.setAirline(airline);
+        existingAircraft.setRoute(route);
+        existingAircraft.setFlightNumber(dto.getFlightNumber());
+        existingAircraft.setRows(dto.getRows());
+        existingAircraft.setSeatsPerRow(dto.getSeatsPerRow());
+        existingAircraft.setTotalSeats(dto.getTotalSeats());
+        existingAircraft.setPricePerSeat(dto.getPricePerSeat());
+        existingAircraft.setAircraftStatus(dto.getAircraftStatus());
+
+        return AircraftMapper.toResponseDTO(aircraftRepository.save(existingAircraft));
+    }
+
+    public void deleteAircraft(int id) {
+        Aircraft aircraft = aircraftRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Aircraft not found with ID: " + id));
+        aircraftRepository.delete(aircraft);
+    }
+
+
+
 }
 
