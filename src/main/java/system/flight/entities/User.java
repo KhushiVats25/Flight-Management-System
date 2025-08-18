@@ -1,5 +1,6 @@
 package system.flight.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -27,13 +28,13 @@ public class User {
     @Column(name="date_of_birth", nullable = false)
     private LocalDate dateOfBirth;
 
-    @Column(name="gender", length=1)
+    @Column(name="gender", length=8)
     private String gender;
 
     @Column(name="username", nullable=false, unique=true, length = 30)
     private String username;
 
-    @Column(name="password_salt", nullable = false, length = 10)
+    @Column(name="password_salt", nullable = false, length = 20)
     private String passwordSalt;
 
     @Column(name="password_hash", nullable = false, length = 64)
@@ -45,7 +46,7 @@ public class User {
     @Column(name="email_id", nullable = false, unique=true, length=100)
     private String emailId;
 
-    @Column(name= "phone_no", length = 10)
+    @Column(name= "phone_no", length = 15)
     private String phoneNo;
 
 
@@ -71,6 +72,7 @@ public class User {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="role_id", nullable= false)
+    @JsonBackReference
     private Role role;
 
 }
