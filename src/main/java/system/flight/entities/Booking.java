@@ -1,5 +1,6 @@
 package system.flight.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -23,6 +24,7 @@ public class Booking {
 
     @ManyToOne
     @JoinColumn(name = "aircraft_id_fk", nullable = false)
+    @JsonIgnore
     private Aircraft aircraft;
 
     @Column(name="total_amount",nullable = false)
