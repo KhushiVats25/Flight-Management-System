@@ -26,4 +26,7 @@ public class Seat {
 
     @Column(name = "is_booked", nullable = false)
     private boolean isBooked = false;
+
+    public void setBooking(Booking booking) {
+    }
 }
