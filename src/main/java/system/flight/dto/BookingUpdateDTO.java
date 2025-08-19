@@ -10,6 +10,4 @@ import lombok.NoArgsConstructor;
 public class BookingUpdateDTO {
     private String seatName;
     private String bookingStatus;
-
-
 }
