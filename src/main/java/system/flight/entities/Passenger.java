@@ -33,7 +33,20 @@ public class Passenger {
     @Column(name = "gender", nullable = false,length = 3)
     private String gender;
 
-    @Column(name = "seat_number", nullable = false)
-    private String seatNumber;
+//@Column(name = "seat_number")
+//private Seat SeatNumber;
+
+    @ManyToOne
+    @JoinColumn(name = "seat_number", nullable = false) // or true if optional
+    private Seat seatNumber;
+
+
+
+// No need to store Seat separately unless required
+
+
+
+
+
 }
 

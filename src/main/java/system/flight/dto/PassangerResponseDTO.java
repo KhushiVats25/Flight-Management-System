@@ -5,21 +5,16 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import system.flight.entities.Seat;
 
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class PassangerDTO {
+public class PassangerResponseDTO {
     private int passengerId;
-    private int bookingId;
-    private int userId;
     private String name;
-    private int age;
     private String gender;
-    private Seat SeatNumber;
+    private Seat seatNumber;
 
-
-
-
-//    private String seatNumber;
 
 }
+
