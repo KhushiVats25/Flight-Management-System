@@ -8,7 +8,10 @@ import lombok.*;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+
 public class Airline {
+
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,9 +25,18 @@ public class Airline {
     private String headquartersCity;
 
 
+    @Column(name = "code", length = 10)
+    private String code;
+
+    @Column(name = "country", length = 50)
+    private String country;
+
+
+
     @ManyToOne
     @JoinColumn(name = "owner_user_id", nullable = false)
     private User owner;
+
 
 }
 

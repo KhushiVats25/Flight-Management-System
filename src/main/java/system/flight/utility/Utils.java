@@ -3,52 +3,27 @@ package system.flight.utility;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.util.Base64;
 
 public class Utils {
 
-
+    // Generates a random salt using SecureRandom and Base64 encoding
     public static String generateSalt() {
-
-        final int SALT_LENGTH = 10;
-
-        String saltChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-
-        StringBuilder strSalt = new StringBuilder(SALT_LENGTH);
-
-        SecureRandom random = new SecureRandom();
-
-        for (int i = 0; i < SALT_LENGTH; i++) {
-
-            int randomIndex = random.nextInt(saltChars.length());
-
-            strSalt.append(saltChars.charAt(randomIndex));
-
-        }
-
-        return strSalt.toString();
+        byte[] saltBytes = new byte[8]; // 8 bytes = 64 bits
+        SecureRandom secureRandom = new SecureRandom();
+        secureRandom.nextBytes(saltBytes);
+        return Base64.getUrlEncoder().withoutPadding().encodeToString(saltBytes); // URL-safe Base64
     }
 
-    public static String generateHash(String inputString) {
-        String strHash = "";
+    // Generates a SHA-256 hash of the input string + salt
+    public static String generateHash(String inputString, String salt) {
+        String combined = inputString + salt;
         try {
-            MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
-            byte[] hashBytes = messageDigest.digest(inputString.getBytes());
-            strHash = bytesToHex(hashBytes);
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            byte[] hashBytes = digest.digest(combined.getBytes());
+            return Base64.getEncoder().encodeToString(hashBytes); // Base64 encoded hash
         } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
+            throw new RuntimeException("SHA-256 algorithm not found", e);
         }
-        return strHash;
-    }
-
-    private static String bytesToHex(byte[] bytes) {
-        StringBuilder hexString = new StringBuilder(2 * bytes.length);
-        for (byte b : bytes) {
-            String hex = Integer.toHexString(0xff & b);
-            if (hex.length() == 1) {
-                hexString.append("0");
-            }
-            hexString.append(hex);
-        }
-        return hexString.toString();
     }
 }
