@@ -8,8 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class BookingUpdateDTO {
-    private String seatName;
     private String bookingStatus;
-
+    private String seatName;
 
 }
