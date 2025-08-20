@@ -16,7 +16,4 @@ public class BookingResponseDTO {
     private double totalAmount;
     private boolean bookingStatus;
     private Timestamp createdAt;
-
-
-
 }
