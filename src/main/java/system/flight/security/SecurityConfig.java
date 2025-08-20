@@ -33,6 +33,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/users").permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
 
+                        .requestMatchers("/actuator/**").hasRole("ADMIN")
+
                         // Aircrafts
                         .requestMatchers(HttpMethod.GET, "/api/aircrafts/**").hasAnyRole("USER", "FLIGHT_MANAGER", "FLIGHT_OWNER", "ADMIN")
                         .requestMatchers(HttpMethod.POST, "/api/aircrafts").hasAnyRole("FLIGHT_MANAGER", "ADMIN")

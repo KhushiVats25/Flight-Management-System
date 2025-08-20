@@ -6,6 +6,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import system.flight.dto.ApiResponseDTO;
+import system.flight.dto.PaymentsResponseDTO;
 import system.flight.entities.Payment;
 import system.flight.services.PaymentService;
 
@@ -20,15 +22,21 @@ public  class PaymentController{
         private PaymentService paymentService;
 
         @GetMapping
-        public ResponseEntity<List<Payment>> getAllPayments() {
-            List<Payment> payments = paymentService.getAllPayments();
-            return ResponseEntity.ok(payments);
+        public ResponseEntity<ApiResponseDTO<List<Payment>>> getAllPayments() {
+            List<Payment> retrievedPayments = paymentService.getAllPayments();
+            return ResponseEntity.ok(new ApiResponseDTO<>(200, "All payments retrieved successfully",retrievedPayments));
         }
 
         @GetMapping("/{id}")
-        public ResponseEntity<Payment> getPaymentById(@PathVariable int id) {
-            Payment payment = paymentService.getPaymentById(id);
-            return ResponseEntity.ok(payment);
+        public ResponseEntity<ApiResponseDTO<Payment>> getPaymentById(@PathVariable int id) {
+            Payment retrievedPayment = paymentService.getPaymentById(id);
+            return ResponseEntity.ok(new ApiResponseDTO<>(200, "Payment details retrieved successfully",retrievedPayment));
+        }
+
+        @GetMapping("/status/{status}")
+        public ResponseEntity<List<PaymentsResponseDTO>> getPaymentsByStatus(@PathVariable String status) {
+            List<PaymentsResponseDTO> payments = paymentService.getPaymentsByStatus(status);
+            return ResponseEntity.ok(payments);
         }
 }
 
