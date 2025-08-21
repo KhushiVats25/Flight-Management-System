@@ -25,6 +25,10 @@ public class SecurityConfig {
     @Autowired
     private CustomAuthenticationProvider customAuthenticationProvider;
 
+    @Autowired
+    private TokenBlacklistService tokenBlacklistService;
+
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
@@ -81,6 +85,7 @@ public class SecurityConfig {
 
     @Bean
     public JwtAuthenticationFilter jwtAuthenticationFilter() {
-        return new JwtAuthenticationFilter(jwtService, userDetailsService);
+        return new JwtAuthenticationFilter(jwtService, userDetailsService, tokenBlacklistService);
     }
+
 }
