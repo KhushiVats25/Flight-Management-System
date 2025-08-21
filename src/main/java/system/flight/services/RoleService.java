@@ -9,6 +9,7 @@ import system.flight.exception.ResourceNotFoundException;
 import system.flight.repository.RoleRepository;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class RoleService {
@@ -16,7 +17,9 @@ public class RoleService {
     @Autowired
     private RoleRepository roleRepository;
     public List<RolesDTO> getAllRoles(){
-        List<Role>roles=roleRepository.findAll();
+        List<Role> roles=roleRepository.findAll().stream()
+                .filter(role -> !role.isDeleted())
+                .collect(Collectors.toList());
         if(roles.isEmpty()){
             throw new ResourceNotFoundException("Roles not found");
 
@@ -47,8 +50,10 @@ public class RoleService {
         Role role = roleRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Role with ID " + id + " not found"));
 
-        roleRepository.delete(role);
+        role.setIsDeleted(true);
+        roleRepository.save(role);
     }
+
 
 
 
