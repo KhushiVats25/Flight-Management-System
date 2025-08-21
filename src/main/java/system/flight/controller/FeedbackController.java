@@ -15,7 +15,7 @@ public class FeedbackController {
 
     @Autowired
     private FeedbackService feedbackService;
-
+    //feedback get
     @PostMapping
     public ResponseEntity<ApiResponseDTO<FeedbackDTO>> submitFeedback(@RequestBody FeedbackDTO dto) {
         return ResponseEntity.ok(feedbackService.submitFeedback(dto));
