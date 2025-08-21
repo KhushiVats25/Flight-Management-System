@@ -28,8 +28,19 @@ public class Booking {
     @JsonIgnore
     private Aircraft aircraft;
 
-    @OneToOne
+//    @OneToOne
+//    private Seat seat;
+
+//    @ManyToOne
+//    @JoinColumn(name = "seat_seat_id", nullable = false)
+//    private Seat seat;
+
+
+    @ManyToOne(optional = true)
+    @JoinColumn(name = "seat_seat_id", nullable = true)
     private Seat seat;
+
+
 
 
     @Column(name="total_amount",nullable = false)
