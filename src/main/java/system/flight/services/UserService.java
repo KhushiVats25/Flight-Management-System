@@ -131,7 +131,8 @@ public class UserService {
     public void deleteUserById(int userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NoSuchElementException("Cannot delete. User not found with ID: " + userId));
-        userRepository.delete(user);
+        user.setIsDeleted(true);
+        userRepository.save(user);
     }
 
     }

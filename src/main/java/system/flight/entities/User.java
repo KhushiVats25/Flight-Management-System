@@ -75,4 +75,11 @@ public class User {
     @JsonBackReference
     private Role role;
 
+    @Column(name = "is_deleted")
+    private Boolean isDeleted = false;
+
+    public boolean isDeleted() {
+        return Boolean.TRUE.equals(this.isDeleted);
+    }
+
 }
