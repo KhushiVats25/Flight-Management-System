@@ -1,47 +1,50 @@
 package system.flight.mapper;
 
-import system.flight.dto.PassangerDTO;
-import system.flight.dto.PassangerResponseDTO;
+import system.flight.dto.BookingRequestDTO;
+import system.flight.dto.PassengerDTO;
+import system.flight.dto.PassengerInfoDTO;
 import system.flight.entities.Booking;
 import system.flight.entities.Passenger;
 import system.flight.entities.User;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 public class PassengerMapper {
 
-    // Convert Entity to DTO (used for internal logic or updates)
-    public static PassangerDTO toDTO(Passenger passenger) {
-        PassangerDTO dto = new PassangerDTO();
+    public static Passenger toEntity(BookingRequestDTO.PassengerDTO dto, Booking booking, User user) {
+        return Passenger.builder()
+                .name(dto.getName())
+                .age(dto.getAge())
+                .gender(dto.getGender())
+                .seatNumber(dto.getSeatNumber())
+                .booking(booking)
+                .user(user)
+                .build();
+    }
+    public static PassengerDTO toDTO(Passenger passenger) {
+        PassengerDTO dto = new PassengerDTO();
         dto.setPassengerId(passenger.getPassengerId());
-        dto.setBookingId(passenger.getBooking().getBookingId());
-        dto.setUserId(passenger.getUser().getUserId());
         dto.setName(passenger.getName());
         dto.setAge(passenger.getAge());
         dto.setGender(passenger.getGender());
-        dto.setSeatNumber(passenger.getBooking().getSeat()); // Seat comes from Booking
+        dto.setSeatNumber(passenger.getSeatNumber());
         return dto;
     }
 
-    // Convert DTO to Entity (used during creation or update)
-    public static Passenger toEntity(PassangerDTO dto, Booking booking, User user) {
-        Passenger passenger = new Passenger();
-        passenger.setPassengerId(dto.getPassengerId());
-        passenger.setBooking(booking);
-        passenger.setUser(user);
-        passenger.setName(dto.getName());
-        passenger.setAge(dto.getAge());
-        passenger.setGender(dto.getGender());
-        passenger.setSeatNumber((booking.getSeat()));
-        // Seat number is managed via Booking, not set directly in Passenger
-        return passenger;
+    public static PassengerInfoDTO mapToDTO(Passenger passenger) {
+        return new PassengerInfoDTO(
+                passenger.getPassengerId(),
+                passenger.getName(),
+                passenger.getAge(),
+                passenger.getGender(),
+                passenger.getSeatNumber()
+        );
     }
 
-    // Convert Entity to ResponseDTO (used for API responses)
-    public static PassangerResponseDTO toResponseDTO(Passenger passenger) {
-        PassangerResponseDTO response = new PassangerResponseDTO();
-        response.setPassengerId(passenger.getPassengerId());
-        response.setName(passenger.getName());
-        response.setGender(passenger.getGender());
-        response.setSeatNumber(passenger.getBooking().getSeat()); // Seat from Booking
-        return response;
+    public static List<PassengerInfoDTO> mapToDTOList(List<Passenger> passengers) {
+        return passengers.stream()
+                .map(PassengerMapper::mapToDTO)
+                .collect(Collectors.toList());
     }
 }

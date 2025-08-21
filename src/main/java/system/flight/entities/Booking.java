@@ -6,6 +6,9 @@ import lombok.*;
 import system.flight.enums.BookingStatus;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "bookings")
@@ -16,11 +19,13 @@ public class Booking {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "booking_id_pk")
+    @Column(name = "booking_id")
     private int bookingId;
+    private String seatName;
+
 
     @ManyToOne
-    @JoinColumn(name = "user_id_fk")
+    @JoinColumn(name = "user_id")
     private User user;
 
     @ManyToOne
@@ -28,30 +33,30 @@ public class Booking {
     @JsonIgnore
     private Aircraft aircraft;
 
-//    @OneToOne
-//    private Seat seat;
-
-//    @ManyToOne
-//    @JoinColumn(name = "seat_seat_id", nullable = false)
-//    private Seat seat;
-
-
-    @ManyToOne(optional = true)
-    @JoinColumn(name = "seat_seat_id", nullable = true)
+    @ManyToOne
+    @JoinColumn(name = "seat_id", nullable=false)
     private Seat seat;
 
 
-
-
     @Column(name="total_amount",nullable = false)
-    private double amount;
+    private double totalAmount;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(name = "booking_status", nullable = false)
     private BookingStatus bookingStatus;
 
     @Column(name="created_at" , nullable=false)
-    private Timestamp createdAt;
+    private LocalDateTime createdAt;
 
+    @OneToMany(mappedBy = "booking", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Passenger> passengers = new ArrayList<>();
+
+    public boolean isConfirmed() {
+        return this.bookingStatus == BookingStatus.CONFIRMED;
+    }
+
+    public boolean isCancelled() {
+        return this.bookingStatus == BookingStatus.CANCELLED;
+    }
 
 }

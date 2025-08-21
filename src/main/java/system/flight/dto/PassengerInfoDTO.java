@@ -3,23 +3,17 @@ package system.flight.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import system.flight.entities.Seat;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class PassangerDTO {
+public class PassengerInfoDTO {
     private int passengerId;
-    private int bookingId;
-    private int userId;
+
     private String name;
     private int age;
     private String gender;
-    private Seat SeatNumber;
+    private String seatNumber;
 
-
-
-
-//    private String seatNumber;
 
 }
