@@ -1,5 +1,6 @@
 package system.flight.mapper;
 
+import org.springframework.stereotype.Component;
 import system.flight.dto.BookingRequestDTO;
 import system.flight.dto.BookingResponseDTO;
 import system.flight.entities.Aircraft;
@@ -11,7 +12,7 @@ import system.flight.entities.User;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
-
+@Component
 public class BookingMapper {
     public static Booking toEntity(BookingRequestDTO dto, User user, Aircraft aircraft) {
         Booking booking = new Booking();
