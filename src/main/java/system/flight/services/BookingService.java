@@ -2,13 +2,16 @@ package system.flight.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import system.flight.dto.BookingResponseDTO;
 import system.flight.dto.BookingUpdateDTO;
 import system.flight.dto.PaymentsRequestDTO;
 import system.flight.entities.*;
 import system.flight.enums.BookingStatus;
 import system.flight.enums.PaymentStatus;
 import system.flight.exception.ResourceNotFoundException;
+import system.flight.mapper.BookingMapper;
 import system.flight.mapper.PaymentMapper;
+import system.flight.mapper.RouteMapper;
 import system.flight.repository.*;
 
 import java.sql.Timestamp;
@@ -73,8 +76,14 @@ public class BookingService {
         return savedBooking;
     }
 
-    public List<Booking> getAllBookings() {
-        return bookingRepository.findAll();
+    public List<BookingResponseDTO> getAllBookings() {
+        List<Booking> bookedTickets = bookingRepository.findAll();
+        if (bookedTickets.isEmpty()) {
+            throw new ResourceNotFoundException("No bookings found");
+        }
+        return bookedTickets.stream()
+                .map(BookingMapper::toDto)
+                .toList();
     }
 
     public Booking getBookingById(int id) {
