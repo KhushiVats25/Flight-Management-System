@@ -6,6 +6,7 @@ import system.flight.entities.Route;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface RouteRepository extends JpaRepository<Route, Integer> {
@@ -13,5 +14,8 @@ public interface RouteRepository extends JpaRepository<Route, Integer> {
     List<Route> findByDestinationCity(String destinationCity);
     List<Route> findByArrivalTime(LocalDateTime arrivalTime);
     List<Route> findByDepartureTime(LocalDateTime departureTime);
+    Optional<Route> findBySourceCityAndDestinationCityAndDepartureTime(String sourceCity, String destinationCity, LocalDateTime departureTime);
+
+
 
 }
