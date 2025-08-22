@@ -57,6 +57,11 @@ public class Aircraft {
     @OneToMany(mappedBy = "aircraft", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Booking> bookings = new ArrayList<>();
 
+    @Column(name = "is_deleted")
+    private Boolean isDeleted = false;
 
+    public boolean isDeleted() {
+        return Boolean.TRUE.equals(this.isDeleted);
+    }
 
 }
