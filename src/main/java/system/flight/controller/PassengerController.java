@@ -3,12 +3,9 @@ package system.flight.controller;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
+
 import org.springframework.web.bind.annotation.*;
 
-
-
-import system.flight.dto.PassengerDTO;
 import system.flight.dto.PassengerInfoDTO;
 import system.flight.services.PassengerService;
 

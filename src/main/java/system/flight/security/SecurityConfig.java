@@ -52,7 +52,22 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.DELETE, "/api/airlines/**").hasAnyRole("FLIGHT_OWNER", "ADMIN")
 
                         // Bookings
-                        .requestMatchers("/api/bookings/**").hasAnyRole("USER", "ADMIN")
+                                .requestMatchers(HttpMethod.GET, "/api/bookings").hasAnyRole("ADMIN","FLIGHT_MANAGER","FLIGHT_OWNER")
+                        .requestMatchers(HttpMethod.GET, "/api/bookings/**").hasAnyRole("USER", "FLIGHT_MANAGER", "FLIGHT_OWNER", "ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/bookings").hasAnyRole("USER")
+                        .requestMatchers(HttpMethod.PUT, "/api/bookings/**").hasAnyRole("USER","FLIGHT_MANAGER")
+                        .requestMatchers(HttpMethod.DELETE, "/api/bookings/**").hasAnyRole("ADMIN", "FLIGHT_MANAGER")
+
+                        // Feedback
+                        .requestMatchers(HttpMethod.GET, "/api/feedback/**").hasAnyRole( "FLIGHT_MANAGER","ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/feedback").hasAnyRole("USER")
+                        .requestMatchers(HttpMethod.DELETE, "/api/bookings/**").hasAnyRole("USER")
+
+                        //Passengers
+                        .requestMatchers(HttpMethod.GET, "/api/passengers/**").hasAnyRole("USER", "FLIGHT_MANAGER", "FLIGHT_OWNER", "ADMIN")
+                         //Payments
+                        .requestMatchers(HttpMethod.GET, "/api/payments/**").hasAnyRole("USER", "FLIGHT_MANAGER", "FLIGHT_OWNER", "ADMIN")
+
 
                         // Routes
                         .requestMatchers(HttpMethod.GET, "/api/routes/**").hasAnyRole("USER", "FLIGHT_MANAGER", "FLIGHT_OWNER", "ADMIN")
@@ -63,10 +78,16 @@ public class SecurityConfig {
                         // Roles
                         .requestMatchers("/api/roles/**").hasRole("ADMIN")
 
-                        // Users
+                        //Users
+                        .requestMatchers(HttpMethod.GET, "/api/users").hasAnyRole("ADMIN")
+//                        .requestMatchers(HttpMethod.GET, "/api/users/{id}").hasAnyRole("ADMIN","FLIGHT_MANAGER", "FLIGHT_OWNER", "USER")
+
                         .requestMatchers(HttpMethod.GET, "/api/users/**").hasAnyRole("ADMIN","FLIGHT_MANAGER", "FLIGHT_OWNER", "USER")
                         .requestMatchers(HttpMethod.PUT, "/api/users/**").hasAnyRole("ADMIN","FLIGHT_MANAGER", "FLIGHT_OWNER", "USER")
                         .requestMatchers(HttpMethod.DELETE, "/api/users/**").hasAnyRole("ADMIN","FLIGHT_MANAGER", "FLIGHT_OWNER", "USER")
+                                //Payments
+                                .requestMatchers(HttpMethod.GET, "/api/payments").hasAnyRole("ADMIN")
+                                .requestMatchers(HttpMethod.GET, "/api/payments/**").hasAnyRole("ADMIN","FLIGHT_MANAGER", "FLIGHT_OWNER", "USER")
 
                         // Catch-all
                         .anyRequest().authenticated()

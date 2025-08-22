@@ -1,0 +1,215 @@
+
+for adding user :
+
+{
+  "fullName": "Aarav Mehta",
+  "dateOfBirth": "1995-08-20",
+  "gender": "Male",
+  "username": "aarav95",
+  "passwordSalt": "randomSalt123",
+  "passwordHash": "a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5z6a7b8c9d0e1f2",
+  "address": "123 Marine Drive, Mumbai",
+  "emailId": "aarav.mehta@example.com",
+  "phoneNo": "9876543210",
+  "authStatus": true,
+  "roleId": 2
+}
+{
+  "fullName": "Priya Sharma",
+  "dateOfBirth": "1988-03-15",
+  "gender": "Female",
+  "username": "priya.admin",
+  "passwordSalt": "salt123",
+  "passwordHash": "f1e2d3c4b5a69788776655443322110099887766554433221100ffeeddccbbaa",
+  "address": "Sector 21, Chandigarh",
+  "emailId": "priya.sharma@admin.com",
+  "phoneNo": "9812345678",
+  "authStatus": true,
+  "roleId": 1
+}
+
+{
+  "fullName": "Rohan Verma",
+  "dateOfBirth": "1992-11-05",
+  "gender": "Male",
+  "username": "rohan.staff",
+  "passwordSalt": "salt456",
+  "passwordHash": "aabbccddeeff00112233445566778899aabbccddeeff00112233445566778899",
+  "address": "MG Road, Bengaluru",
+  "emailId": "rohan.verma@staff.com",
+  "phoneNo": "9876543210",
+  "authStatus": true,
+  "roleId": 3
+}
+
+
+{
+  "fullName": "Sneha Kulkarni",
+  "dateOfBirth": "2000-06-25",
+  "gender": "Female",
+  "username": "sneha.customer",
+  "passwordSalt": "salt789",
+  "passwordHash": "11223344556677889900aabbccddeeff11223344556677889900aabbccddeeff",
+  "address": "Law College Road, Pune",
+  "emailId": "sneha.kulkarni@customer.com",
+  "phoneNo": "9001234567",
+  "authStatus": true,
+  "roleId": 4
+}
+
+
+
+To add airlines:
+
+{
+  "id": 0,
+  "name": "Indigo Express",
+  "code": "IXP02",
+  "country": "India",
+  "ownerId": 2
+}
+{
+  "id": 0,
+  "name": "Global Wings",
+  "code": "GW202",
+  "country": "United Arab Emirates",
+  "ownerId": 2
+}
+
+To add routes:
+{
+  "routeId": 0,
+  "departureTime": "2025-08-21T08:30:00",
+  "arrivalTime": "2025-08-21T11:15:00",
+  "sourceCity": "Mumbai",
+  "destinationCity": "Delhi",
+  "distanceInKm": 1400,
+  "estimatedTime": "02:45:00"
+}
+
+{
+  "routeId": 0,
+  "departureTime": "2025-08-22T06:00:00",
+  "arrivalTime": "2025-08-22T07:30:00",
+  "sourceCity": "Bangalore",
+  "destinationCity": "Hyderabad",
+  "distanceInKm": 570,
+  "estimatedTime": "01:30:00"
+}
+{
+  "routeId": 0,
+  "departureTime": "2025-08-22T09:15:00",
+  "arrivalTime": "2025-08-22T11:00:00",
+  "sourceCity": "Chennai",
+  "destinationCity": "Kochi",
+  "distanceInKm": 690,
+  "estimatedTime": "01:45:00"
+}
+
+tO ADD AIRCRAFTS
+{
+  "aircraftId": 0,
+  "airlineId": 1,
+  "routeId": 1,
+  "flightNumber": "AI101",
+  "rows": 25,
+  "seatsPerRow": 6,
+  "totalSeats": 150,
+  "pricePerSeat": 4200.00,
+  "aircraftStatus": "ON_TIME"
+}
+{
+  "aircraftId": 0,
+  "airlineId": 2,
+  "routeId": 2,
+  "flightNumber": "SJ202",
+  "rows": 28,
+  "seatsPerRow": 6,
+  "totalSeats": 168,
+  "pricePerSeat": 4800.00,
+  "aircraftStatus": "DELAYED"
+}
+{
+  "aircraftId": 0,
+  "airlineId": 3,
+  "routeId": 3,
+  "flightNumber": "IN303",
+  "rows": 32,
+  "seatsPerRow": 6,
+  "totalSeats": 192,
+  "pricePerSeat": 5100.00,
+  "aircraftStatus": "ON_TIME"
+}
+
+To add bookings
+:
+{
+  "userId": 4,
+  "aircraftId": 2,
+  "totalAmount": 9000.00,
+  "bookingStatus": "CONFIRMED",
+  "passengers": [
+    {
+      "name": "Aarav Mehta",
+      "age": 28,
+      "gender": "Male",
+      "seatNumber": "1A"
+    },
+    {
+      "name": "Sneha Kulkarni",
+      "age": 26,
+      "gender": "Female",
+      "seatNumber": "1B"
+    }
+  ]
+}
+
+{
+  "userId": 5,
+  "aircraftId": 3,
+  "totalAmount": 7500.00,
+  "bookingStatus": "CONFIRMED",
+  "passengers": [
+    {
+      "name": "Rohan Desai",
+      "age": 35,
+      "gender": "Male",
+      "seatNumber": "2C"
+    },
+    {
+      "name": "Meera Desai",
+      "age": 32,
+      "gender": "Female",
+      "seatNumber": "2D"
+    }
+  ]
+}
+
+
+{
+  "userId": 3,
+  "aircraftId": 1,
+  "totalAmount": 6200.00,
+  "bookingStatus": "CONFIRMED",
+  "passengers": [
+    {
+      "name": "Ishaan Verma",
+      "age": 30,
+      "gender": "Male",
+      "seatNumber": "3A"
+    },
+    {
+      "name": "Neha Verma",
+      "age": 28,
+      "gender": "Female",
+      "seatNumber": "3B"
+    }
+  ]
+}
+
+
+To update booking status :
+{
+  "bookingStatus": "CANCELLED"
+
+}

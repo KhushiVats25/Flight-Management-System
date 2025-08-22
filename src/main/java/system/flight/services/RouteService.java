@@ -4,13 +4,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import system.flight.dto.RouteDTO;
 import system.flight.entities.Route;
+
 import system.flight.exception.ResourceNotFoundException;
 import system.flight.mapper.RouteMapper;
 import system.flight.repository.RouteRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class RouteService {
@@ -18,28 +18,7 @@ public class RouteService {
     @Autowired
     private RouteRepository routeRepository;
 
-
-    public static class ResourceAlreadyExistsException extends RuntimeException {
-        public ResourceAlreadyExistsException(String message) {
-            super(message);
-        }
-    }
-
     public RouteDTO createRoute(RouteDTO routeDTO) {
-        Optional<Route> existingRoute = routeRepository
-                .findBySourceCityAndDestinationCityAndDepartureTime(
-                        routeDTO.getSourceCity(),
-                        routeDTO.getDestinationCity(),
-                        routeDTO.getDepartureTime()
-                );
-
-        if (existingRoute.isPresent()) {
-            throw new ResourceAlreadyExistsException(
-                    "Route from " + routeDTO.getSourceCity() + " to " + routeDTO.getDestinationCity() +
-                            " at " + routeDTO.getDepartureTime() + " already exists."
-            );
-        }
-
         Route route = RouteMapper.toEntity(routeDTO);
         return RouteMapper.toDTO(routeRepository.save(route));
     }

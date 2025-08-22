@@ -10,7 +10,6 @@ import system.flight.entities.User;
 import system.flight.services.UserService;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 
 @RestController
 @RequestMapping("/api/users")
