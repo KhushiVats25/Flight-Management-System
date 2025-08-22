@@ -24,50 +24,76 @@ public class RouteService {
     }
 
     public List<RouteDTO> getAllRoutes() {
-        List<Route> routes = routeRepository.findAll();
+        List<Route> routes = routeRepository.findAll()
+                .stream()
+                .filter(route -> !Boolean.TRUE.equals(route.getIsDeleted()))
+                .toList();
+
         if (routes.isEmpty()) {
-            throw new ResourceNotFoundException("No routes found");
+            throw new ResourceNotFoundException("No active routes found");
         }
+
         return routes.stream()
                 .map(RouteMapper::toDTO)
                 .toList();
     }
 
     public List<RouteDTO> getRoutesBySourceCity(String sourceCity) {
-        List<Route> routes = routeRepository.findBySourceCity(sourceCity);
+        List<Route> routes = routeRepository.findBySourceCity(sourceCity)
+                .stream()
+                .filter(route -> !Boolean.TRUE.equals(route.getIsDeleted()))
+                .toList();
+
         if (routes.isEmpty()) {
-            throw new ResourceNotFoundException("No routes found from source city: " + sourceCity);
+            throw new ResourceNotFoundException("No active routes found from source city: " + sourceCity);
         }
+
         return routes.stream()
                 .map(RouteMapper::toDTO)
                 .toList();
     }
 
+
     public List<RouteDTO> getRoutesByDestinationCity(String destinationCity) {
-        List<Route> routes = routeRepository.findByDestinationCity(destinationCity);
+        List<Route> routes = routeRepository.findByDestinationCity(destinationCity)
+                .stream()
+                .filter(route -> !Boolean.TRUE.equals(route.getIsDeleted()))
+                .toList();
+
         if (routes.isEmpty()) {
-            throw new ResourceNotFoundException("No routes found to destination city: " + destinationCity);
+            throw new ResourceNotFoundException("No active routes found to destination city: " + destinationCity);
         }
+
         return routes.stream()
                 .map(RouteMapper::toDTO)
                 .toList();
     }
 
     public List<RouteDTO> getRoutesByArrivalTime(LocalDateTime arrivalTime) {
-        List<Route> routes = routeRepository.findByArrivalTime(arrivalTime);
+        List<Route> routes = routeRepository.findByArrivalTime(arrivalTime)
+                .stream()
+                .filter(route -> !Boolean.TRUE.equals(route.getIsDeleted()))
+                .toList();
+
         if (routes.isEmpty()) {
-            throw new ResourceNotFoundException("No routes found with arrival time: " + arrivalTime);
+            throw new ResourceNotFoundException("No active routes found with arrival time: " + arrivalTime);
         }
+
         return routes.stream()
                 .map(RouteMapper::toDTO)
                 .toList();
     }
 
     public List<RouteDTO> getRoutesByDepartureTime(LocalDateTime departureTime) {
-        List<Route> routes = routeRepository.findByDepartureTime(departureTime);
+        List<Route> routes = routeRepository.findByDepartureTime(departureTime)
+                .stream()
+                .filter(route -> !Boolean.TRUE.equals(route.getIsDeleted()))
+                .toList();
+
         if (routes.isEmpty()) {
-            throw new ResourceNotFoundException("No routes found with departure time: " + departureTime);
+            throw new ResourceNotFoundException("No active routes found with departure time: " + departureTime);
         }
+
         return routes.stream()
                 .map(RouteMapper::toDTO)
                 .toList();
@@ -75,9 +101,12 @@ public class RouteService {
 
     public RouteDTO getRouteById(int id) {
         Route route = routeRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Route not found with ID: " + id));
+                .filter(r -> !Boolean.TRUE.equals(r.getIsDeleted()))
+                .orElseThrow(() -> new ResourceNotFoundException("Route not found or has been deleted with ID: " + id));
+
         return RouteMapper.toDTO(route);
     }
+
 
     public RouteDTO updateRoute(int routeId, RouteDTO routeDTO) {
         Route existingRoute = routeRepository.findById(routeId)

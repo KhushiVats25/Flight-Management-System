@@ -75,11 +75,17 @@ public class UserService {
 
     public User getUserById(int userId) {
         return userRepository.findById(userId)
-                .orElseThrow(() -> new NoSuchElementException("User not found with ID: " + userId));
+                .filter(user -> !Boolean.TRUE.equals(user.getIsDeleted()))
+                .orElseThrow(() -> new NoSuchElementException("User not found or has been deleted with ID: " + userId));
     }
+
     public List<User> getAllUsers() {
-        return userRepository.findAll();
+        return userRepository.findAll()
+                .stream()
+                .filter(user -> !Boolean.TRUE.equals(user.getIsDeleted()))
+                .toList();
     }
+
 
 
     public UserProfileResponseDTO updateUserProfile(int userId, UserProfileDTO dto) {

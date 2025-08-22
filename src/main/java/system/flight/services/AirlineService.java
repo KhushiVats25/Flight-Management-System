@@ -48,39 +48,40 @@ public class AirlineService {
     }
 
     public ApiResponseDTO<List<AirlinesDTO>> getAllAirlines() {
-        List<AirlinesDTO> airlines = airlineRepository.findAll()
-                .stream()
-                .map(AirlineMapper::toDTO)
-                .collect(Collectors.toList());
-        return new ApiResponseDTO<>(HttpStatus.OK.value(), "Airlines fetched successfully", airlines);
+            List<AirlinesDTO> airlines = airlineRepository.findAll()
+                    .stream()
+                    .filter(airline -> !Boolean.TRUE.equals(airline.getIsDeleted()))
+                    .map(AirlineMapper::toDTO)
+                    .collect(Collectors.toList());
+
+            return new ApiResponseDTO<>(HttpStatus.OK.value(), "Airlines fetched successfully", airlines);
+
     }
 
     public ApiResponseDTO<AirlinesDTO> getAirlineById(int id) {
         return airlineRepository.findById(id)
+                .filter(airline -> !Boolean.TRUE.equals(airline.getIsDeleted()))
                 .map(airline -> new ApiResponseDTO<>(HttpStatus.OK.value(), "Airline fetched successfully", AirlineMapper.toDTO(airline)))
                 .orElseGet(() -> new ApiResponseDTO<>(HttpStatus.NOT_FOUND.value(), "Airline not found with ID: " + id, null));
+
     }
 
     public ApiResponseDTO<List<AirlinesDTO>> getAirlinesByName(String name) {
-        List<Airline> airlines = airlineRepository.findAllByName(name);
+        List<Airline> airlines = airlineRepository.findAllByName(name)
+                .stream()
+                .filter(airline -> !Boolean.TRUE.equals(airline.getIsDeleted()))
+                .collect(Collectors.toList());
 
         if (airlines.isEmpty()) {
-            return new ApiResponseDTO<>(
-                    HttpStatus.NOT_FOUND.value(),
-                    "No airlines found with Name: " + name,
-                    null
-            );
+            return new ApiResponseDTO<>(HttpStatus.NOT_FOUND.value(), "No airlines found with Name: " + name, null);
         }
 
         List<AirlinesDTO> airlineDTOs = airlines.stream()
                 .map(AirlineMapper::toDTO)
                 .collect(Collectors.toList());
 
-        return new ApiResponseDTO<>(
-                HttpStatus.OK.value(),
-                "Airlines fetched successfully",
-                airlineDTOs
-        );
+        return new ApiResponseDTO<>(HttpStatus.OK.value(), "Airlines fetched successfully", airlineDTOs);
+
     }
 
 
