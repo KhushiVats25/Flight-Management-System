@@ -3,12 +3,15 @@ package system.flight.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import system.flight.entities.Booking;
+import system.flight.enums.BookingStatus;
+
+import java.util.List;
 
 @Repository
-public interface BookingRepository extends JpaRepository<Booking, Integer>   {
+public interface BookingRepository extends JpaRepository<Booking, Integer> {
 
-    // You can add custom query methods here if needed
-    // For example:
-    // List<Booking> findByUser_UserId(int userId);
-    // List<Booking> findByAircraft_AircraftId(int aircraftId);
+
+    List<Booking> findByUserUserId(int userId);
+
+    List<Booking> findByBookingStatus(BookingStatus status);
 }

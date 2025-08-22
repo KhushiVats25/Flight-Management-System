@@ -5,10 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import system.flight.dto.AircraftResponseDTO;
 import system.flight.dto.AircraftsDTO;
-import system.flight.entities.Aircraft;
-import system.flight.entities.Airline;
-import system.flight.entities.Route;
-import system.flight.entities.Seat;
+import system.flight.entities.*;
 import system.flight.enums.AircraftStatus;
 import system.flight.exception.ResourceNotFoundException;
 import system.flight.mapper.AircraftMapper;
@@ -16,6 +13,7 @@ import system.flight.repository.AircraftRepository;
 import system.flight.repository.AirlineRepository;
 import system.flight.repository.RouteRepository;
 import system.flight.repository.SeatRepository;
+import system.flight.utility.OwnershipUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +33,9 @@ public class AircraftService {
 
     @Autowired
     private SeatRepository seatRepository;
+
+    @Autowired
+    private UserService userService;
 
     public AircraftResponseDTO createAircraft(AircraftsDTO dto) {
         Airline airline = airlineRepository.findById(dto.getAirlineId())
@@ -78,23 +79,34 @@ public class AircraftService {
     }
 
     public List<AircraftResponseDTO> getAllAircrafts() {
-        List<Aircraft> aircrafts=aircraftRepository.findAll();
+        List<Aircraft> aircrafts = aircraftRepository.findAll();
         List<AircraftResponseDTO> responseDTOS = new ArrayList<>();
 
-        for(Aircraft a:aircrafts){
-            AircraftResponseDTO dto=new AircraftResponseDTO();
-            responseDTOS.add(AircraftMapper.toResponseDTO(a));
+        for (Aircraft a : aircrafts) {
+            if (!Boolean.TRUE.equals(a.getIsDeleted())) {
+                User currentUser = userService.getCurrentAuthenticatedUser();
+
+                OwnershipUtils.validateOwnership(a.getAirline().getOwner(), currentUser);
+                responseDTOS.add(AircraftMapper.toResponseDTO(a));
+            }
         }
 
         return responseDTOS;
     }
 
+
     public AircraftResponseDTO getAircraftById(int id) {
-        Aircraft aircraft=aircraftRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Aircraft Not Found"));;
+        Aircraft aircraft = aircraftRepository.findById(id)
+                .filter(a -> !Boolean.TRUE.equals(a.getIsDeleted()))
+                .orElseThrow(() -> new ResourceNotFoundException("Aircraft Not Found or has been deleted"));
+
+        User currentUser = userService.getCurrentAuthenticatedUser();
+
+        OwnershipUtils.validateOwnership(aircraft.getAirline().getOwner(), currentUser);
 
         return AircraftMapper.toResponseDTO(aircraft);
-
     }
+
 
     public AircraftResponseDTO updateAircraft(int id, AircraftsDTO dto) {
         Aircraft existingAircraft = aircraftRepository.findById(id)
@@ -106,6 +118,10 @@ public class AircraftService {
         Route route = routeRepository.findById(dto.getRouteId())
                 .orElseThrow(() -> new ResourceNotFoundException("Route not found"));
 
+
+        User currentUser = userService.getCurrentAuthenticatedUser();
+
+        OwnershipUtils.validateOwnership(existingAircraft.getAirline().getOwner(), currentUser);
 
         existingAircraft.setAirline(airline);
         existingAircraft.setRoute(route);
@@ -122,7 +138,12 @@ public class AircraftService {
     public void deleteAircraft(int id) {
         Aircraft aircraft = aircraftRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Aircraft not found with ID: " + id));
-        aircraftRepository.delete(aircraft);
+
+        User currentUser = userService.getCurrentAuthenticatedUser();
+
+        OwnershipUtils.validateOwnership(aircraft.getAirline().getOwner(), currentUser);
+        aircraft.setIsDeleted(true);
+        aircraftRepository.save(aircraft);
     }
 
 

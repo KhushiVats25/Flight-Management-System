@@ -7,13 +7,13 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+public class PassengerInfoDTO {
+    private int passengerId;
 
-public class AirlinesDTO {
-    private int id;
     private String name;
-    private String code;
-    private String headquartersCity;
-    private Integer ownerId;
+    private int age;
+    private String gender;
+    private String seatNumber;
+
+
 }
-
-

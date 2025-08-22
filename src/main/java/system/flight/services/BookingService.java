@@ -1,18 +1,24 @@
 package system.flight.services;
 
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import system.flight.dto.BookingUpdateDTO;
-import system.flight.dto.PaymentsRequestDTO;
+import system.flight.dto.*;
 import system.flight.entities.*;
 import system.flight.enums.BookingStatus;
 import system.flight.enums.PaymentStatus;
 import system.flight.exception.ResourceNotFoundException;
+import system.flight.mapper.BookingMapper;
+import system.flight.mapper.PassengerMapper;
 import system.flight.mapper.PaymentMapper;
 import system.flight.repository.*;
+import system.flight.utility.OwnershipUtils;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class BookingService {
@@ -27,38 +33,74 @@ public class BookingService {
     private AircraftRepository aircraftRepository;
 
     @Autowired
+    private SeatRepository seatRepository;
+
+    @Autowired
+    private UserService userService;
+
+    public Seat getSeatByName(String seatName, int aircraftId) {
+        return seatRepository.findBySeatNameAndAircraftAircraftId(seatName, aircraftId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Seat not found for seat name: " + seatName + " on aircraft ID: " + aircraftId));
+    }
+
+    @Autowired
+    private PassengerRepository passengerRepository;
+    private final BookingMapper bookingMapper;
+
+    @Autowired
+    public BookingService(BookingRepository bookingRepository, BookingMapper bookingMapper) {
+        this.bookingRepository = bookingRepository;
+        this.bookingMapper = bookingMapper;
+    }
+    @Autowired
     private PaymentRepository paymentRepository;
 
-    public Booking createBooking(int userId, int aircraftId, double amount, String seatName) {
-        User user = userRepository.findById(userId)
+
+
+    @Transactional
+    public BookingResponseDTO createBooking(BookingRequestDTO dto) {
+
+        User user = userRepository.findById(dto.getUserId())
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-        Aircraft aircraft = aircraftRepository.findById(aircraftId)
+        Aircraft aircraft = aircraftRepository.findById(dto.getAircraftId())
                 .orElseThrow(() -> new ResourceNotFoundException("Aircraft not found"));
 
-        Seat seat = aircraft.getSeats().stream()
-                .filter(s -> s.getSeatName().equalsIgnoreCase(seatName))
-                .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("Seat not found"));
+        if (dto.getPassengers() == null || dto.getPassengers().isEmpty()) {
+            throw new IllegalArgumentException("At least one passenger is required.");
+        }
+
+        String seatName = dto.getPassengers().get(0).getSeatNumber();
+        if (seatName == null || seatName.isEmpty()) {
+            throw new IllegalArgumentException("Seat number is required for booking.");
+        }
+
+        Seat seat = seatRepository.findBySeatNameAndAircraftAircraftId(seatName, dto.getAircraftId())
+                .orElseThrow(() -> new ResourceNotFoundException("Seat not found for seat number: " + seatName + " on aircraft ID: " + dto.getAircraftId()));
 
         if (seat.isBooked()) {
-            throw new IllegalArgumentException("Seat already booked. Please choose another.");
+            throw new IllegalStateException("Seat " + seatName + " is already booked.");
         }
 
         seat.setBooked(true);
+        seatRepository.save(seat);
 
-        Booking booking = new Booking();
-        booking.setUser(user);
-        booking.setAircraft(aircraft);
-        booking.setAmount(amount);
+        Booking booking = BookingMapper.toEntity(dto, user, aircraft);
+        booking.setBookingStatus(dto.getBookingStatus());
         booking.setSeat(seat);
-        booking.setBookingStatus(BookingStatus.CONFIRMED);
-        booking.setCreatedAt(new Timestamp(System.currentTimeMillis()));
 
-        seat.setBooking(booking);
         Booking savedBooking = bookingRepository.save(booking);
 
-        // Create PaymentRequestDTO for mapper
+        List<Passenger> passengers = dto.getPassengers().stream()
+                .map(p -> PassengerMapper.toEntity(p, savedBooking, user))
+                .collect(Collectors.toList());
+
+        passengerRepository.saveAll(passengers);
+        savedBooking.setPassengers(passengers);
+
+        double amount = dto.getTotalAmount();
+
         PaymentsRequestDTO paymentDTO = new PaymentsRequestDTO();
         paymentDTO.setBookingId(savedBooking.getBookingId());
         paymentDTO.setUserId(user.getUserId());
@@ -66,25 +108,44 @@ public class BookingService {
         paymentDTO.setPaymentStatus(PaymentStatus.SUCCESS);
         paymentDTO.setPaymentMethod("AUTO");
 
-
         Payment payment = PaymentMapper.toEntity(paymentDTO, savedBooking, user);
         paymentRepository.save(payment);
 
-        return savedBooking;
+        return bookingMapper.toResponseDTO(savedBooking);
     }
 
-    public List<Booking> getAllBookings() {
-        return bookingRepository.findAll();
+    public List<BookingResponseDTO> getAllBookings() {
+        User currentUser = userService.getCurrentAuthenticatedUser();
+
+        return bookingRepository.findAll().stream()
+                .map(BookingMapper::toResponseDTO)
+                .collect(Collectors.toList());
     }
 
-    public Booking getBookingById(int id) {
-        return bookingRepository.findById(id)
+
+    public BookingResponseDTO getBookingById(int id) {
+        Booking booking = bookingRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Booking not found"));
+
+
+        User currentUser = userService.getCurrentAuthenticatedUser();
+        User bookingUser = booking.getUser();
+        OwnershipUtils.validateOwnership(bookingUser, currentUser);
+
+        return BookingMapper.toResponseDTO(booking);
     }
 
-    public Booking updateBooking(int bookingId, BookingUpdateDTO dto) {
+
+
+    @Transactional
+    public BookingResponseDTO updateBooking(int bookingId, BookingUpdateDTO dto) {
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new ResourceNotFoundException("Booking not found"));
+
+        User currentUser = userService.getCurrentAuthenticatedUser();
+        User bookingUser= booking.getUser();
+
+        OwnershipUtils.validateOwnership(bookingUser, currentUser);
 
         BookingStatus newStatus = BookingStatus.valueOf(dto.getBookingStatus().toUpperCase());
         booking.setBookingStatus(newStatus);
@@ -129,19 +190,21 @@ public class BookingService {
                 oldSeat.setBooking(null);
             }
 
+
             newSeat.setBooked(true);
             newSeat.setBooking(booking);
             booking.setSeat(newSeat);
         }
 
-        return bookingRepository.save(booking);
+        Booking updatedBooking = bookingRepository.save(booking);
+        return BookingMapper.toResponseDTO(updatedBooking);
     }
 
 
-    public void deleteBooking(int bookingId) {
-        Booking booking = bookingRepository.findById(bookingId)
-                .orElseThrow(() -> new ResourceNotFoundException("Booking not found"));
 
+    public void deleteBooking(int id) {
+        Booking booking = bookingRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Booking not found"));
         bookingRepository.delete(booking);
     }
 }
