@@ -84,6 +84,9 @@ public class AircraftService {
 
         for (Aircraft a : aircrafts) {
             if (!Boolean.TRUE.equals(a.getIsDeleted())) {
+                User currentUser = userService.getCurrentAuthenticatedUser();
+
+                OwnershipUtils.validateOwnership(a.getAirline().getOwner(), currentUser);
                 responseDTOS.add(AircraftMapper.toResponseDTO(a));
             }
         }
@@ -96,6 +99,10 @@ public class AircraftService {
         Aircraft aircraft = aircraftRepository.findById(id)
                 .filter(a -> !Boolean.TRUE.equals(a.getIsDeleted()))
                 .orElseThrow(() -> new ResourceNotFoundException("Aircraft Not Found or has been deleted"));
+
+        User currentUser = userService.getCurrentAuthenticatedUser();
+
+        OwnershipUtils.validateOwnership(aircraft.getAirline().getOwner(), currentUser);
 
         return AircraftMapper.toResponseDTO(aircraft);
     }
