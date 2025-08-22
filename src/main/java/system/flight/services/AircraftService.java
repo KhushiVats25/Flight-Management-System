@@ -131,7 +131,8 @@ public class AircraftService {
         User currentUser = userService.getCurrentAuthenticatedUser();
 
         OwnershipUtils.validateOwnership(aircraft.getAirline().getOwner(), currentUser);
-        aircraftRepository.delete(aircraft);
+        aircraft.setIsDeleted(true);
+        aircraftRepository.save(aircraft);
     }
 
 
