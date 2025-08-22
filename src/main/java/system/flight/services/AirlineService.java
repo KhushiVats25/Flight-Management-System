@@ -2,6 +2,7 @@ package system.flight.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import system.flight.dto.AirlinesDTO;
 import system.flight.dto.ApiResponseDTO;
@@ -10,6 +11,7 @@ import system.flight.entities.User;
 import system.flight.mapper.AirlineMapper;
 import system.flight.repository.AirlineRepository;
 import system.flight.utility.OwnershipUtils;
+
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -47,29 +49,57 @@ public class AirlineService {
         }
     }
 
+
     public ApiResponseDTO<List<AirlinesDTO>> getAllAirlines() {
-            List<AirlinesDTO> airlines = airlineRepository.findAll()
-                    .stream()
-                    .filter(airline -> !Boolean.TRUE.equals(airline.getIsDeleted()))
-                    .map(AirlineMapper::toDTO)
-                    .collect(Collectors.toList());
+        User currentUser = userService.getCurrentAuthenticatedUser();
 
-            return new ApiResponseDTO<>(HttpStatus.OK.value(), "Airlines fetched successfully", airlines);
+        List<AirlinesDTO> airlines = airlineRepository.findAll()
+                .stream()
+                .filter(airline -> !Boolean.TRUE.equals(airline.getIsDeleted()))
+                .filter(airline -> {
+                    try {
+                        OwnershipUtils.validateOwnership(airline.getOwner(), currentUser);
+                        return true;
+                    } catch (AccessDeniedException e) {
+                        return false;
+                    }
+                })
+                .map(AirlineMapper::toDTO)
+                .collect(Collectors.toList());
 
+        return new ApiResponseDTO<>(HttpStatus.OK.value(), "Airlines fetched successfully", airlines);
     }
+
+
+
 
     public ApiResponseDTO<AirlinesDTO> getAirlineById(int id) {
+        User currentUser = userService.getCurrentAuthenticatedUser();
+
         return airlineRepository.findById(id)
                 .filter(airline -> !Boolean.TRUE.equals(airline.getIsDeleted()))
-                .map(airline -> new ApiResponseDTO<>(HttpStatus.OK.value(), "Airline fetched successfully", AirlineMapper.toDTO(airline)))
+                .map(airline -> {
+                    OwnershipUtils.validateOwnership(airline.getOwner(), currentUser);
+                    return new ApiResponseDTO<>(HttpStatus.OK.value(), "Airline fetched successfully", AirlineMapper.toDTO(airline));
+                })
                 .orElseGet(() -> new ApiResponseDTO<>(HttpStatus.NOT_FOUND.value(), "Airline not found with ID: " + id, null));
-
     }
 
+
     public ApiResponseDTO<List<AirlinesDTO>> getAirlinesByName(String name) {
+        User currentUser = userService.getCurrentAuthenticatedUser();
+
         List<Airline> airlines = airlineRepository.findAllByName(name)
                 .stream()
                 .filter(airline -> !Boolean.TRUE.equals(airline.getIsDeleted()))
+                .filter(airline -> {
+                    try {
+                        OwnershipUtils.validateOwnership(airline.getOwner(), currentUser);
+                        return true;
+                    } catch (AccessDeniedException e) {
+                        return false;
+                    }
+                })
                 .collect(Collectors.toList());
 
         if (airlines.isEmpty()) {
@@ -81,8 +111,8 @@ public class AirlineService {
                 .collect(Collectors.toList());
 
         return new ApiResponseDTO<>(HttpStatus.OK.value(), "Airlines fetched successfully", airlineDTOs);
-
     }
+
 
 
     public ApiResponseDTO<AirlinesDTO> updateAirline(int id, AirlinesDTO dto) {
