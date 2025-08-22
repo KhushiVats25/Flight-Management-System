@@ -5,8 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import system.flight.dto.ApiResponseDTO;
 import system.flight.dto.RouteDTO;
-import system.flight.entities.Route;
 import system.flight.services.RouteService;
 
 import java.time.LocalDateTime;
@@ -20,9 +20,10 @@ public class RouteController {
     private RouteService routeService;
 
     @PostMapping
-    public ResponseEntity<RouteDTO>createRoute(@RequestBody RouteDTO routeDTO){
+    public ResponseEntity<ApiResponseDTO<RouteDTO>> createRoute(@RequestBody RouteDTO routeDTO){
         RouteDTO createdRoute=routeService.createRoute(routeDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdRoute);
+        ApiResponseDTO<RouteDTO> responseDTO= new ApiResponseDTO<>(HttpStatus.OK.value(), "Route created successfully",createdRoute);
+        return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
     }
     @GetMapping
     public ResponseEntity<List<RouteDTO>> getAllRoutes() {
@@ -80,10 +81,6 @@ public class RouteController {
             return ResponseEntity.status(404).body(e.getMessage());
         }
     }
-
-
-
-
 
 }
 

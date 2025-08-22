@@ -100,6 +100,7 @@ public class RouteService {
     public void deleteRoute(int routeId) {
         Route route = routeRepository.findById(routeId)
                 .orElseThrow(() -> new ResourceNotFoundException("Cannot delete. Route not found with ID: " + routeId));
-        routeRepository.delete(route);
+        route.setIsDeleted(true);
+        routeRepository.save(route);
     }
 }
