@@ -5,10 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import system.flight.dto.AircraftResponseDTO;
 import system.flight.dto.AircraftsDTO;
-import system.flight.entities.Aircraft;
-import system.flight.entities.Airline;
-import system.flight.entities.Route;
-import system.flight.entities.Seat;
+import system.flight.entities.*;
 import system.flight.enums.AircraftStatus;
 import system.flight.exception.ResourceNotFoundException;
 import system.flight.mapper.AircraftMapper;
@@ -16,6 +13,7 @@ import system.flight.repository.AircraftRepository;
 import system.flight.repository.AirlineRepository;
 import system.flight.repository.RouteRepository;
 import system.flight.repository.SeatRepository;
+import system.flight.utility.OwnershipUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +33,9 @@ public class AircraftService {
 
     @Autowired
     private SeatRepository seatRepository;
+
+    @Autowired
+    private UserService userService;
 
     public AircraftResponseDTO createAircraft(AircraftsDTO dto) {
         Airline airline = airlineRepository.findById(dto.getAirlineId())
@@ -107,6 +108,10 @@ public class AircraftService {
                 .orElseThrow(() -> new ResourceNotFoundException("Route not found"));
 
 
+        User currentUser = userService.getCurrentAuthenticatedUser();
+
+        OwnershipUtils.validateOwnership(existingAircraft.getAirline().getOwner(), currentUser);
+
         existingAircraft.setAirline(airline);
         existingAircraft.setRoute(route);
         existingAircraft.setFlightNumber(dto.getFlightNumber());
@@ -122,6 +127,10 @@ public class AircraftService {
     public void deleteAircraft(int id) {
         Aircraft aircraft = aircraftRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Aircraft not found with ID: " + id));
+
+        User currentUser = userService.getCurrentAuthenticatedUser();
+
+        OwnershipUtils.validateOwnership(aircraft.getAirline().getOwner(), currentUser);
         aircraftRepository.delete(aircraft);
     }
 

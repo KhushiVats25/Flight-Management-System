@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import system.flight.dto.AircraftResponseDTO;
 import system.flight.dto.AircraftsDTO;
 import system.flight.dto.ApiResponseDTO;
+import system.flight.entities.Aircraft;
 import system.flight.services.AircraftService;
 import java.util.List;
 
@@ -51,6 +52,7 @@ public class AircraftController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponseDTO<Void>> deleteAircraft(@PathVariable int id) {
+
         aircraftService.deleteAircraft(id);
         return ResponseEntity.ok(new ApiResponseDTO<>(200, "Aircraft deleted successfully", null));
     }

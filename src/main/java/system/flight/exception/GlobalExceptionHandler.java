@@ -33,4 +33,5 @@ public class GlobalExceptionHandler {
 
         return buildErrorResponse(ex, HttpStatus.INTERNAL_SERVER_ERROR, "Cannot Save Image");
     }
+
 }
