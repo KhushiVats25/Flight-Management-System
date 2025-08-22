@@ -79,23 +79,27 @@ public class AircraftService {
     }
 
     public List<AircraftResponseDTO> getAllAircrafts() {
-        List<Aircraft> aircrafts=aircraftRepository.findAll();
+        List<Aircraft> aircrafts = aircraftRepository.findAll();
         List<AircraftResponseDTO> responseDTOS = new ArrayList<>();
 
-        for(Aircraft a:aircrafts){
-            AircraftResponseDTO dto=new AircraftResponseDTO();
-            responseDTOS.add(AircraftMapper.toResponseDTO(a));
+        for (Aircraft a : aircrafts) {
+            if (!Boolean.TRUE.equals(a.getIsDeleted())) {
+                responseDTOS.add(AircraftMapper.toResponseDTO(a));
+            }
         }
 
         return responseDTOS;
     }
 
+
     public AircraftResponseDTO getAircraftById(int id) {
-        Aircraft aircraft=aircraftRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Aircraft Not Found"));;
+        Aircraft aircraft = aircraftRepository.findById(id)
+                .filter(a -> !Boolean.TRUE.equals(a.getIsDeleted()))
+                .orElseThrow(() -> new ResourceNotFoundException("Aircraft Not Found or has been deleted"));
 
         return AircraftMapper.toResponseDTO(aircraft);
-
     }
+
 
     public AircraftResponseDTO updateAircraft(int id, AircraftsDTO dto) {
         Aircraft existingAircraft = aircraftRepository.findById(id)
