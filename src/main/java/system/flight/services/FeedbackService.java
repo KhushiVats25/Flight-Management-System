@@ -11,6 +11,8 @@ import system.flight.exception.ResourceNotFoundException;
 import system.flight.repository.FeedbackRepository;
 import system.flight.repository.PassengerRepository;
 
+import java.time.LocalDateTime;
+
 @Service
 public class FeedbackService {
 
@@ -26,15 +28,15 @@ public class FeedbackService {
 
         Feedback feedback = new Feedback();
         feedback.setPassenger(passenger);
-        feedback.setFeedbackTime(dto.getFeedbackTime());
+        feedback.setFeedbackTime(LocalDateTime.now()); // Automatically set current time
         feedback.setFeedbackMessage(dto.getFeedbackMessage());
 
         Feedback savedFeedback = feedbackRepository.save(feedback);
         dto.setFeedbackId(savedFeedback.getFeedbackId());
+        dto.setFeedbackTime(savedFeedback.getFeedbackTime()); // Return the actual saved time
 
         return new ApiResponseDTO<>(HttpStatus.OK.value(), "Feedback submitted successfully", dto);
     }
-
 
     public ApiResponseDTO<Feedback> getFeedback(int feedbackId) {
         Feedback feedback = feedbackRepository.findById(feedbackId)
@@ -42,7 +44,6 @@ public class FeedbackService {
 
         return new ApiResponseDTO<>(HttpStatus.OK.value(), "Feedback fetched successfully", feedback);
     }
-
 
     public ApiResponseDTO<Void> deleteFeedback(int feedbackId) {
         Feedback feedback = feedbackRepository.findById(feedbackId)
