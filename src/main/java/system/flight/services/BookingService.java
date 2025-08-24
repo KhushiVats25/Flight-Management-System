@@ -115,7 +115,7 @@ public class BookingService {
     }
 
     public List<BookingResponseDTO> getAllBookings() {
-        User currentUser = userService.getCurrentAuthenticatedUser();
+
 
         return bookingRepository.findAll().stream()
                 .map(BookingMapper::toResponseDTO)
