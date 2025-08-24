@@ -11,4 +11,15 @@ public class OwnershipUtils {
             throw new AccessDeniedException("You are not authorized to perform this action.");
         }
     }
+
+    public static boolean isPrivilegedRole(int roleId) {
+        return roleId == 1
+                || roleId == 2
+                || roleId == 3;
+    }
+
+    public static boolean isPrivilegedRoleAdmin(int roleId) {
+        return roleId == 1;
+    }
+
 }

@@ -25,9 +25,4 @@ public class AircraftsDTO {
 
 
     private AircraftStatus aircraftStatus;
-
-
-
-
-
 }

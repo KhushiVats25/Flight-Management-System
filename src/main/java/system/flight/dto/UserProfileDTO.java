@@ -17,27 +17,8 @@ import java.util.List;
 public class UserProfileDTO {
 
 
-//    @JsonProperty("address")
     private String address;
-
-//    @JsonProperty("phoneNo")
     private String phoneNo;
-
-//    @JsonProperty("gender")
-//    private String gender;
-//
-//    @JsonProperty("fullName")
-//    private String fullName;
-
-
-//    @JsonFormat(pattern = "yyyy-MM-dd")
-//
-//    private LocalDate dateOfBirth;
-
-//    @JsonProperty("emailId")
-//    private String emailId;
-
-
 
     private MultipartFile profileImage;
     private List<MultipartFile> iDocs;

@@ -3,6 +3,7 @@ package system.flight.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import system.flight.dto.CreateUserDTO;
 import system.flight.dto.CreateUserResponseDTO;
@@ -70,7 +71,7 @@ public class UserService {
         return UserMapper.toDto(savedUser );
     }
 
-
+    @Transactional
     public User getUserById(int userId) {
         User currentUser = getCurrentAuthenticatedUser();
         User userRetrievedById = userRepository.findById(userId)
@@ -91,11 +92,15 @@ public class UserService {
 
 
 
+    @Transactional
     public UserProfileResponseDTO updateUserProfile(int userId, UserProfileDTO dto) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User with id " + String.valueOf(userId) + " not found"));
         User currentUser = getCurrentAuthenticatedUser();
-        OwnershipUtils.validateOwnership(user, currentUser);
+
+
+            OwnershipUtils.validateOwnership(user, currentUser);
+
 
         user.setAddress(dto.getAddress());
         user.setPhoneNo(dto.getPhoneNo());
@@ -136,7 +141,9 @@ public class UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NoSuchElementException("Cannot delete. User not found with ID: " + userId));
         User currentUser = getCurrentAuthenticatedUser();
-        OwnershipUtils.validateOwnership(user, currentUser);
+        if (!OwnershipUtils.isPrivilegedRole(currentUser.getRole().getRoleId())) {
+            OwnershipUtils.validateOwnership(user, currentUser);
+        }
         user.setIsDeleted(true);
         userRepository.save(user);
     }
@@ -148,6 +155,7 @@ public class UserService {
 
     //Code for getting user details.
 
+    @Transactional
     public User getCurrentAuthenticatedUser() {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         return getUserByUsername(username); // Assuming this method exists

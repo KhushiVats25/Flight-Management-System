@@ -62,6 +62,7 @@ public class User {
 
 
     @Lob
+    @Basic(fetch = FetchType.EAGER)
     @Column(name = "profile_image")
     private byte[] profileImage;
 

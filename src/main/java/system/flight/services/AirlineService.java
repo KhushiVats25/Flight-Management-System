@@ -13,6 +13,7 @@ import system.flight.repository.AirlineRepository;
 import system.flight.utility.OwnershipUtils;
 
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -58,7 +59,9 @@ public class AirlineService {
                 .filter(airline -> !Boolean.TRUE.equals(airline.getIsDeleted()))
                 .filter(airline -> {
                     try {
-                        OwnershipUtils.validateOwnership(airline.getOwner(), currentUser);
+                        if(!OwnershipUtils.isPrivilegedRoleAdmin(currentUser.getRole().getRoleId())) {
+                            OwnershipUtils.validateOwnership(airline.getOwner(), currentUser);
+                        }
                         return true;
                     } catch (AccessDeniedException e) {
                         return false;
@@ -79,7 +82,9 @@ public class AirlineService {
         return airlineRepository.findById(id)
                 .filter(airline -> !Boolean.TRUE.equals(airline.getIsDeleted()))
                 .map(airline -> {
-                    OwnershipUtils.validateOwnership(airline.getOwner(), currentUser);
+                    if(!OwnershipUtils.isPrivilegedRoleAdmin(currentUser.getRole().getRoleId())) {
+                        OwnershipUtils.validateOwnership(airline.getOwner(), currentUser);
+                    }
                     return new ApiResponseDTO<>(HttpStatus.OK.value(), "Airline fetched successfully", AirlineMapper.toDTO(airline));
                 })
                 .orElseGet(() -> new ApiResponseDTO<>(HttpStatus.NOT_FOUND.value(), "Airline not found with ID: " + id, null));
